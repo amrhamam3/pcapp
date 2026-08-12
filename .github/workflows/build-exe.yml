@@ -19,19 +19,21 @@ jobs:
         distribution: 'zulu'
         java-version: '17'
 
+    # 1. إعداد الـ Gradle بشكل مستقل
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v3
 
+    # 2. خطوة توليد الـ Wrapper محلياً في السيرفر لضمان نجاح أي أمر لاحق
+    - name: Generate Wrapper
+      run: gradle wrapper
+
+    # 3. تشغيل البناء باستخدام الـ Wrapper الذي تم توليده فوراً
     - name: Build EXE Package
       run: ./gradlew packageExe
 
-    # التعديل الأقوى: مسح شامل لكل مجلدات المخرجات لرفع الملف مهما كان مساره الفرعي
+    # 4. رفع المجلد الرئيسي للمخرجات بالكامل لضمان ظهور الـ Artifacts
     - name: Upload EXE Artifact
       uses: actions/upload-artifact@v4
       with:
         name: Amr3D-Nesting-Pro-EXE
-        path: |
-          **/build/compose/binaries/main/exe/**
-          **/build/compose/binaries/main/msi/**
-          **/build/distributions/**
-        if-no-files-found: warn
+        path: build/compose/binaries/
